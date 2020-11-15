@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-import concurrent.futures
 import random
 import time
 import logging
+import multiprocessing
 
 
 logging.basicConfig(filename='simulation.log', level=logging.DEBUG)
@@ -82,7 +82,7 @@ def simulate_flight_step(plane):
 
 def simulate_flight(plane):
     for step in simulate_flight_step(plane):
-        a = 3
+        pass
 
 
 if __name__ == "__main__":
@@ -90,9 +90,13 @@ if __name__ == "__main__":
     plane_2 = Plane("MS-180")
 
     try:
-        planes = [plane_1, plane_2]
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            executor.map(simulate_flight, planes)
+        p1 = multiprocessing.Process(target=simulate_flight, args=[plane_1])
+        p2 = multiprocessing.Process(target=simulate_flight, args=[plane_1])
 
+        p1.start()
+        p2.start()
+
+        p1.join()
+        p2.join()
     except KeyboardInterrupt:
         print("Flight simulator interrupted")
